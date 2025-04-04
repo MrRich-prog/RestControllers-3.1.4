@@ -4,8 +4,17 @@
     <title>Spring Security Example</title>
 </head>
 <body>
-<h1>Welcome to Index PAGE!</h1>
-
-
+<h1>Traveler, welcome spring boot not security page!</h1>
+<form th:method="GET" th:action="@{/login}">
+    <button type="submit">Login</button>
+</form>
+<br>
+<form th:method="GET" th:action="@{/formRegistration}">
+    <button type="submit">Registration</button>
+</form>
+<br>
+<form th:method="GET" th:action="@{/logout}">
+    <button type="submit">Logout</button>
+</form>
 </body>
 </html>

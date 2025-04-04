@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Users table</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+  <h1 class="mt-5">Users table</h1>
+  <table class="table table-striped mt-3">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Username</th>
+      <th>Password</th>
+      <th>Age</th>
+      <th>Role</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+      <td th:text="${user.id}"></td>
+      <td th:text="${user.username}"></td>
+      <td th:text="${user.password}"></td>
+      <td th:text="${user.age}"></td>
+      <td th:text="${user.roles}"></td>
+    </tr>
+    </tbody>
+  </table>
+  <br>
+  <form th:method="GET" th:action="@{/admin/AddUserPage}">
+    <button type="submit">Add user</button>
+  </form>
+  <br>
+  <form th:method="GET" th:action="@{/admin/UpdateUserPage}">
+    <button type="submit">Update user</button>
+  </form>
+  <br>
+  <form th:method="POST" th:action="@{/admin/cleanUserTable}" >
+    <button type="submit">Clean table</button>
+  </form>
+  <br>
+  <form th:method="GET" th:action="@{/admin}" >
+    <button type="submit">Admin profile</button>
+  </form>
+</div>
+</body>
+</html>
