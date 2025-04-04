@@ -85,6 +85,9 @@ public class AdminPage {
     @GetMapping(value = "/getAllUsers")
     public String getAllUsers(ModelMap model) {
         List<User> users = userService.getAllUsers();
+        for (User user : users) {
+            user.setRolesName(user.getRoles().stream().map(Role::getName).collect(Collectors.joining(",")));
+        }
         model.addAttribute("users", users);
         return "Table";
     }
