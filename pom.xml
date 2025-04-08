@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>ru.MrRich</groupId>
-	<artifactId>spring-boot_security</artifactId>
+	<artifactId>spring-bootstrap</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>spring-boot_security</name>
 	<description>Demo project for Spring Boot</description>
@@ -72,6 +72,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>5.3.3</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

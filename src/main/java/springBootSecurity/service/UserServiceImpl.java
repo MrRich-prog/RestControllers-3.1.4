@@ -4,13 +4,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import springBootSecurity.dao.UserDAO;
+import springBootSecurity.models.Role;
 import springBootSecurity.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -68,9 +71,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public boolean updateUser(User user) {
-        if(userDAO.findByUsername(user.getUsername()) != null) {
-            return false;
-        }
+//        if(userDAO.findByUsername(user.getUsername()) != null) {
+//            return false;
+//        }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userDAO.save(user);
         return true;
@@ -86,4 +89,20 @@ public class UserServiceImpl implements UserService {
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getAuthorities());
     }
 
+    public Set<Role> getRoles(String roleName) {
+        Set<Role> roles = new HashSet<>();
+        switch (roleName){
+            case "ROLE_ADMIN":
+                roles.add(new Role(1L, "ROLE_ADMIN"));
+                break;
+            case "ROLE_USER":
+                roles.add(new Role(2L, "ROLE_USER"));
+                break;
+            case "ROLE_ADMIN,ROLE_USER":
+                roles.add(new Role(1L, "ROLE_ADMIN"));
+                roles.add(new Role(2L, "ROLE_USER"));
+                break;
+        }
+        return roles;
+    }
 }

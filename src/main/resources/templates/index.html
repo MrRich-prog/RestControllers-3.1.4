@@ -1,20 +1,34 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Spring Security Example</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Users table</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
-<h1>Traveler, welcome spring boot not security page!</h1>
-<form th:method="GET" th:action="@{/login}">
-    <button type="submit">Login</button>
-</form>
-<br>
-<form th:method="GET" th:action="@{/formRegistration}">
-    <button type="submit">Registration</button>
-</form>
-<br>
-<form th:method="GET" th:action="@{/logout}">
-    <button type="submit">Logout</button>
-</form>
+<div class="container" >
+    <div class="mb-5" style="text-align: center">
+        <div class="row-cols-1 mb-5" >
+            <h3 style="background-color: #343a40; color: white;border-radius: 5px;height: 40px;">
+            Traveler, welcome spring boot not security page!</h3>
+        </div>
+        <form th:method="GET" th:action="@{/login}" id="login"></form>
+        <form th:method="GET" th:action="@{/formRegistration}" id="registration"></form>
+    </div>
+    <div style="text-align: center;">
+        <button type="submit" form="registration"
+            style="background-color: deepskyblue; color: white; border-radius: 5px; width: 100px;height: 40px;">Registration</button>
+        <button type="submit" form="login"
+            style="background-color: green; color: white; border-radius: 5px; width: 60px;height: 40px;">Login</button>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
 </body>
 </html>

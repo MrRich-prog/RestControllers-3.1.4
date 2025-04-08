@@ -25,8 +25,9 @@ public class UserPage {
 
     @GetMapping(value = "")
     public String userPage(Principal principal, ModelMap model) {
+
         User user = userService.getUserByUsername(principal.getName());
-        String rolesString = user.getRoles().stream().map(Role::getName).collect(Collectors.joining(", "));
+        String rolesString = user.getRoles().stream().map(Role::getName).sorted().collect(Collectors.joining(", "));
 
         model.addAttribute("role", rolesString);
         model.addAttribute("user", user);
