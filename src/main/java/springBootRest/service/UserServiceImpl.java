@@ -1,11 +1,11 @@
-package springBootSecurity.service;
+package springBootRest.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import springBootSecurity.dao.UserDAO;
-import springBootSecurity.models.Role;
-import springBootSecurity.models.User;
+import springBootRest.dao.UserDAO;
+import springBootRest.models.Role;
+import springBootRest.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -40,14 +41,24 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void removeUserById(Long id) {
+    public boolean removeUserById(Long id) {
+        Optional<User> user = userDAO.findById(id);
+        if(user.isEmpty()) {
+            return false;
+        }
         userDAO.deleteById(id);
+        return true;
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<User> getAllUsers() {
-        return userDAO.findAll();
+        List<User> users = userDAO.findAll();
+        if(!users.isEmpty()) {
+            users.forEach(user1 -> user1.setRolesName(user1.getRoles()
+                    .stream().map(Role::getName).sorted().collect(Collectors.joining(","))));
+        }
+        return users;
     }
 
     @Transactional
@@ -59,8 +70,12 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public User getUserById(Long id) {
-        Optional<User> user = userDAO.findById(id);
-        return user.orElse(null);
+        Optional<User> user1 = userDAO.findById(id);
+        User user = user1.orElse(null);
+        if(user != null) {
+            user.setRolesName(user.getRoles().stream().map(Role::getName).sorted().collect(Collectors.joining(", ")));
+        }
+        return user;
     }
 
     @Transactional(readOnly = true)
@@ -71,9 +86,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public boolean updateUser(User user) {
-//        if(userDAO.findByUsername(user.getUsername()) != null) {
-//            return false;
-//        }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userDAO.save(user);
         return true;
@@ -98,7 +110,7 @@ public class UserServiceImpl implements UserService {
             case "ROLE_USER":
                 roles.add(new Role(2L, "ROLE_USER"));
                 break;
-            case "ROLE_ADMIN,ROLE_USER":
+            case "ROLE_ADMIN, ROLE_USER":
                 roles.add(new Role(1L, "ROLE_ADMIN"));
                 roles.add(new Role(2L, "ROLE_USER"));
                 break;

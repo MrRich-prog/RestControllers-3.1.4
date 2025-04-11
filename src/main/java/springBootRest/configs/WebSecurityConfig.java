@@ -1,4 +1,4 @@
-package springBootSecurity.configs;
+package springBootRest.configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import springBootSecurity.service.UserService;
+import springBootRest.service.UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -31,10 +31,12 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorization -> authorization
+        http
+                .csrf().disable()
+                .authorizeHttpRequests(authorization -> authorization
                 .requestMatchers("/formRegistration", "/index").not().fullyAuthenticated()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/user/**").hasRole("USER")
+                .requestMatchers("/rest/**").hasRole("ADMIN")
+                .requestMatchers("/rest/**").hasRole("USER")
                 .requestMatchers("/").permitAll().anyRequest().authenticated())
                 .formLogin(form -> form.successHandler(successUserHandler).permitAll())
                 .logout(LogoutConfigurer::permitAll)

@@ -1,4 +1,4 @@
-package springBootSecurity.models;
+package springBootRest.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

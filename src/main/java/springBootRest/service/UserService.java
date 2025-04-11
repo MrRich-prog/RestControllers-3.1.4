@@ -1,8 +1,8 @@
-package springBootSecurity.service;
+package springBootRest.service;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
-import springBootSecurity.models.Role;
-import springBootSecurity.models.User;
+import springBootRest.models.Role;
+import springBootRest.models.User;
 
 import java.util.List;
 import java.util.Set;
@@ -11,7 +11,7 @@ public interface UserService extends UserDetailsService {
 
     boolean saveUser(User user);
 
-    void removeUserById(Long id);
+    boolean removeUserById(Long id);
 
     List<User> getAllUsers();
 

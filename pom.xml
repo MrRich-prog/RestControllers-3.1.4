@@ -6,13 +6,13 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.4</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>ru.MrRich</groupId>
-	<artifactId>spring-bootstrap</artifactId>
+	<artifactId>spring-rest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>spring-boot_security</name>
-	<description>Demo project for Spring Boot</description>
+	<name>spring-boot_rest</name>
+	<description>Demo project for Spring Rest</description>
 	<url/>
 	<licenses>
 		<license/>

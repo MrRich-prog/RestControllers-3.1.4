@@ -1,4 +1,4 @@
-package springBootSecurity;
+package springBootRest;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
