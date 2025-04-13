@@ -103,7 +103,7 @@
 
                                 <div class="mb-3">
                                     <label for="saveUserAge" class="form-label">Age</label>
-                                    <input type="number" class="form-control" id="saveUserAge" name="age" required>
+                                    <input type="number"  class="form-control" id="saveUserAge" name="age" required min="1">
                                 </div>
 
                                 <div class="mb-3">
@@ -331,7 +331,6 @@
             event.preventDefault();
             const button = document.getElementById('userTable');
             const csrfToken = document.querySelector("meta[name='csrf-token']").content;
-            console.log('CSRF Token:', csrfToken);
             const user = {
                 username: $('#saveUsername').val(),
                 password: $('#saveUserPassword').val(),
