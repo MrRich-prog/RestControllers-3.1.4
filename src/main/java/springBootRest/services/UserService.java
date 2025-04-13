@@ -1,4 +1,4 @@
-package springBootRest.service;
+package springBootRest.services;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 import springBootRest.models.Role;

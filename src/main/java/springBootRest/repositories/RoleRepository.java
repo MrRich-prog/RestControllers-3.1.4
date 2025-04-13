@@ -1,4 +1,4 @@
-package springBootRest.dao;
+package springBootRest.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import springBootRest.models.Role;

@@ -14,7 +14,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import springBootRest.service.UserService;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfAuthenticationStrategy;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import springBootRest.services.UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -31,28 +37,22 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
+        HttpSessionCsrfTokenRepository httpSessionCsrfTokenRepository = new HttpSessionCsrfTokenRepository();
+        http.
+                csrf(csrf ->
+                        csrf.csrfTokenRequestHandler(new XorCsrfTokenRequestAttributeHandler())
+                                .csrfTokenRepository(httpSessionCsrfTokenRepository)
+                                .sessionAuthenticationStrategy(new CsrfAuthenticationStrategy(httpSessionCsrfTokenRepository))
+                                .ignoringRequestMatchers(new AntPathRequestMatcher("/**"))
+                )// Настройка CSRF токенов
                 .authorizeHttpRequests(authorization -> authorization
-                .requestMatchers("/formRegistration", "/index").not().fullyAuthenticated()
-                .requestMatchers("/rest/**").hasRole("ADMIN")
-                .requestMatchers("/rest/**").hasRole("USER")
+                .requestMatchers("/formRegistration", "/index").permitAll()
+                .requestMatchers("/rest/**").hasAnyRole("ADMIN", "USER")
+                //.requestMatchers("/rest/**").hasRole("USER")
                 .requestMatchers("/").permitAll().anyRequest().authenticated())
                 .formLogin(form -> form.successHandler(successUserHandler).permitAll())
-                .logout(LogoutConfigurer::permitAll)
-                .userDetailsService(userDetailsService());
+                .logout(LogoutConfigurer::permitAll);
         return http.build();
-    }
-
-    // аутентификация inMemory
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User.builder()
-                        .username("admin")
-                        .password(passwordEncoder().encode("admin"))
-                        .roles("ADMIN")
-                        .build();
-        return new InMemoryUserDetailsManager(user);
     }
 
     @Bean

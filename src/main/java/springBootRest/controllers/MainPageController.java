@@ -1,4 +1,4 @@
-package springBootRest.controller;
+package springBootRest.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import springBootRest.models.Role;
 import springBootRest.models.User;
-import springBootRest.service.UserService;
+import springBootRest.services.UserService;
 
 import java.security.Principal;
 import java.util.stream.Collectors;
@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/rest")
-public class RestPage {
+public class MainPageController {
 
     private final UserService userService;
 
-    public RestPage(UserService userService) {
+    public MainPageController(UserService userService) {
         this.userService = userService;
     }
 
