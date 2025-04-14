@@ -3,6 +3,7 @@ package springBootRest.services;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import springBootRest.repositories.RoleRepository;
 import springBootRest.repositories.UserRepository;
 import springBootRest.models.Role;
 import springBootRest.models.User;
@@ -21,11 +22,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     @Transactional
@@ -61,19 +64,13 @@ public class UserServiceImpl implements UserService {
         return users;
     }
 
-    @Transactional
-    @Override
-    public void cleanUsersTable() {
-        userRepository.deleteAll();
-    }
-
     @Transactional(readOnly = true)
     @Override
     public User getUserById(Long id) {
         Optional<User> user1 = userRepository.findById(id);
         User user = user1.orElse(null);
         if(user != null) {
-            user.setRolesName(user.getRoles().stream().map(Role::getName).sorted().collect(Collectors.joining(", ")));
+            user.setRolesName(user.getRoles().stream().map(Role::getName).sorted().collect(Collectors.joining(",")));
         }
         return user;
     }
@@ -85,8 +82,16 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public boolean updateUser(User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+    public boolean updateUser(User user, String usernameOld, String passwordOld) {
+
+        if (userRepository.findByUsername(user.getUsername()) != null) {
+            if (!usernameOld.equals(user.getUsername())) {
+                return false;
+            }
+        }
+        if(!passwordOld.equals(user.getPassword())) {
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        }
         userRepository.save(user);
         return true;
     }
@@ -105,14 +110,14 @@ public class UserServiceImpl implements UserService {
         Set<Role> roles = new HashSet<>();
         switch (roleName){
             case "ROLE_ADMIN":
-                roles.add(new Role(1L, "ROLE_ADMIN"));
+                roles.add(roleRepository.findById(1L));
                 break;
             case "ROLE_USER":
-                roles.add(new Role(2L, "ROLE_USER"));
+                roles.add(roleRepository.findById(2L));
                 break;
-            case "ROLE_ADMIN, ROLE_USER":
-                roles.add(new Role(1L, "ROLE_ADMIN"));
-                roles.add(new Role(2L, "ROLE_USER"));
+            case "ROLE_ADMIN,ROLE_USER":
+                roles.add(roleRepository.findById(1L));
+                roles.add(roleRepository.findById(2L));
                 break;
         }
         return roles;

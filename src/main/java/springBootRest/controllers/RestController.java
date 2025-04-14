@@ -47,9 +47,14 @@ public class RestController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody User user) {
+    public ResponseEntity<?> update(@RequestBody User user, @RequestParam(value = "usernameOld") String usernameOld,
+                                    @RequestParam(value = "passwordOld") String passwordOld) {
+
         user.setRoles(userService.getRoles(user.getRolesName()));
-        boolean updated = userService.updateUser(user);
+        boolean updated = userService.updateUser(user, usernameOld, passwordOld);
+        if (!updated) {
+            System.out.println("Username already exists");
+        }
         return updated ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 

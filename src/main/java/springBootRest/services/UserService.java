@@ -15,13 +15,11 @@ public interface UserService extends UserDetailsService {
 
     List<User> getAllUsers();
 
-    void cleanUsersTable();
-
     User getUserById(Long id);
 
     User getUserByUsername(String username);
 
-    boolean updateUser(User user);
+    boolean updateUser(User user, String username, String password);
 
     Set<Role> getRoles(String roleName);
 }

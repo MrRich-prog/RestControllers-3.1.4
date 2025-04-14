@@ -18,7 +18,7 @@
     <div class="row" style="background-color: #343a40;">
         <div class="col" style="color: white;font-size: 20px;">
             <span th:text="${profile}"></span> with roles:
-            <span th:text="${role_profile}"></span>
+            <span id="role_profile" th:text="${role_profile}"></span>
         </div>
         <div class="col-1" style="text-align: right;">
             <form th:method="GET" th:action="@{/logout}">
@@ -166,6 +166,10 @@
             <div class="modal-body">
                 <form id="userForm" >
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+                    <input type="text" class="form-control" id="usernameOld" name="usernameOld" hidden="hidden">
+                    <input type="text" class="form-control" id="passwordOld" name="passwordOld" hidden="hidden">
+
                     <div class="mb-3">
                         <label for="editUserId" class="form-label">ID</label>
                         <input type="text" class="form-control" id="editUserId" name="id" readonly >
@@ -191,7 +195,7 @@
                         <select class="form-select form-select-lg mb-1" aria-label=".form-select-lg example" id="editUserRole" name="role" >
                             <option value="ROLE_USER">User</option>
                             <option value="ROLE_ADMIN">Admin</option>
-                            <option value="ROLE_ADMIN, ROLE_USER">User and Admin</option>
+                            <option value="ROLE_ADMIN,ROLE_USER">User and Admin</option>
                         </select>
                     </div>
                 </form>
@@ -208,6 +212,23 @@
 <!--Основной скрипт-->
 <script>
     $(document).ready(function () {
+
+        <!--Скрипт скрытия кнопки 'admin' боковой панели-->
+        {
+            const userProfile = $('#role_profile').text();
+            console.log(userProfile);
+            if (userProfile === 'ROLE_USER') {
+                $('#adminPanel').hide();
+                $('#userPanel').show().prop('hidden', false);
+                document.getElementById('adminPanelBut').style.display = 'none';
+            }
+            if (userProfile === 'ROLE_ADMIN') {
+                $('#adminPanel').show();
+                $('#userPanel').hide().prop('hidden', true);
+                document.getElementById('userPanelBut').style.display = 'none';
+            }
+        }
+
         loadUsers();
         // Заполнение таблицы
         function loadUsers() {
@@ -250,6 +271,9 @@
         fetch(`/rest/user?id=${userId}`)
             .then(response => response.json())
             .then(user => {
+                $('#usernameOld').val(user.username);
+                $('#passwordOld').val(user.password);
+
                 $('#editUserId').val(user.id);
                 $('#editUsername').val(user.username);
                 $('#editUserPassword').val(user.password);
@@ -281,8 +305,6 @@
             .catch(error => console.error('Error fetching:', error));
         });
 
-        let csrfToken;
-
         // Обработка отправки формы редактирования
         $('#userForm').on('submit', function (event) {
             event.preventDefault(); // Предотвращаем стандартное поведение формы
@@ -302,7 +324,9 @@
                     age: $('#editUserAge').val(),
                     rolesName: $('#editUserRole').val()
                 };
-                url = `/rest/update`;
+                const usernameOld = $('#usernameOld').val();
+                const passwordOld = $('#passwordOld').val();
+                url = `/rest/update?usernameOld=${encodeURIComponent(usernameOld)}&passwordOld=${encodeURIComponent(passwordOld)}`;
                 method = 'PUT';
                 body = JSON.stringify(updatedUser ); // Преобразуем объект в JSON
             }
@@ -444,20 +468,7 @@
                 });
             }
         });
-
     });
-</script>
-<!--Скрипт скрытия кнопки 'admin' боковой панели-->
-<script>
-    const userProfile = {
-        role: '[[${role}]]'
-    };
-    console.log(userProfile.role);
-    if (userProfile.role === 'ROLE_USER') {
-        $('#adminPanel').hide();
-        $('#userPanel').show().prop('hidden',false);
-        document.getElementById('adminPanelBut').style.display = 'none';
-    }
 </script>
 <!--Библиотеки-->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
