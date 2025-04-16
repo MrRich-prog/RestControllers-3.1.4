@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import springBootRest.models.Role;
 import springBootRest.models.User;
 import springBootRest.repositories.RoleRepository;
-import springBootRest.services.UserService;
+import springBootRest.services.UserService.UserService;
 
 import java.util.HashSet;
 import java.util.Set;

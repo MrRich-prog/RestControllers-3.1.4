@@ -1,9 +1,8 @@
-package springBootRest.services;
+package springBootRest.services.UserService;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import springBootRest.repositories.RoleRepository;
 import springBootRest.repositories.UserRepository;
 import springBootRest.models.Role;
 import springBootRest.models.User;
@@ -11,10 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,13 +20,11 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final RoleRepository roleRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.roleRepository = roleRepository;
     }
 
     @Transactional
@@ -58,8 +54,7 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUsers() {
         List<User> users = userRepository.findAll();
         if(!users.isEmpty()) {
-            users.forEach(user1 -> user1.setRolesName(user1.getRoles()
-                    .stream().map(Role::getName).sorted().collect(Collectors.joining(","))));
+            users.forEach(user -> user.setRolesName(getRolesName(user)));
         }
         return users;
     }
@@ -67,12 +62,9 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public User getUserById(Long id) {
-        Optional<User> user1 = userRepository.findById(id);
-        User user = user1.orElse(null);
-        if(user != null) {
-            user.setRolesName(user.getRoles().stream().map(Role::getName).sorted().collect(Collectors.joining(",")));
-        }
-        return user;
+        Optional<User> user = userRepository.findById(id);
+        user.ifPresent(user1 -> user1.setRolesName(getRolesName(user1)));
+        return user.orElse(null);
     }
 
     @Transactional(readOnly = true)
@@ -84,8 +76,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean updateUser(User user, String usernameOld, String passwordOld) {
 
-        if (userRepository.findByUsername(user.getUsername()) != null) {
-            if (!usernameOld.equals(user.getUsername())) {
+        String name = user.getUsername();
+        if (userRepository.findByUsername(name) != null) {
+            if (!Objects.equals(usernameOld, name)) {
                 return false;
             }
         }
@@ -106,20 +99,7 @@ public class UserServiceImpl implements UserService {
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.getAuthorities());
     }
 
-    public Set<Role> getRoles(String roleName) {
-        Set<Role> roles = new HashSet<>();
-        switch (roleName){
-            case "ROLE_ADMIN":
-                roles.add(roleRepository.findById(1L));
-                break;
-            case "ROLE_USER":
-                roles.add(roleRepository.findById(2L));
-                break;
-            case "ROLE_ADMIN,ROLE_USER":
-                roles.add(roleRepository.findById(1L));
-                roles.add(roleRepository.findById(2L));
-                break;
-        }
-        return roles;
+    private String getRolesName(User user){
+        return user.getRoles().stream().map(Role::getName).sorted().collect(Collectors.joining(","));
     }
 }

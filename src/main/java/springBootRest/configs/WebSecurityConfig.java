@@ -8,19 +8,13 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfAuthenticationStrategy;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import springBootRest.services.UserService;
+import springBootRest.services.UserService.UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -48,7 +42,6 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authorization -> authorization
                 .requestMatchers("/formRegistration", "/index").permitAll()
                 .requestMatchers("/rest/**").hasAnyRole("ADMIN", "USER")
-                //.requestMatchers("/rest/**").hasRole("USER")
                 .requestMatchers("/").permitAll().anyRequest().authenticated())
                 .formLogin(form -> form.successHandler(successUserHandler).permitAll())
                 .logout(LogoutConfigurer::permitAll);

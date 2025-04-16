@@ -90,6 +90,7 @@ public class User implements UserDetails {
     public void setAge(int age) {
         this.age = age;
     }
+
     public Set<Role> getRoles() {
         return roles;
     }
@@ -106,6 +107,7 @@ public class User implements UserDetails {
         this.rolesName = rolesName;
     }
 
+    @Override
     public String toString() {
         StringBuilder role = new StringBuilder();
         for (Role role1 : roles) {
@@ -138,7 +140,6 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        //преобразовать иначе?
         return getRoles();
     }
 

@@ -1,11 +1,9 @@
-package springBootRest.services;
+package springBootRest.services.UserService;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
-import springBootRest.models.Role;
 import springBootRest.models.User;
 
 import java.util.List;
-import java.util.Set;
 
 public interface UserService extends UserDetailsService {
 
@@ -21,5 +19,4 @@ public interface UserService extends UserDetailsService {
 
     boolean updateUser(User user, String username, String password);
 
-    Set<Role> getRoles(String roleName);
 }

@@ -1,6 +1,5 @@
 package springBootRest.controllers;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,25 +9,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import springBootRest.models.User;
-import springBootRest.services.UserService;
+import springBootRest.services.RoleService.RoleService;
+import springBootRest.services.UserService.UserService;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/rest")
 public class RestController {
 
     private final UserService userService;
+    private final RoleService roleService;
 
-    public RestController(UserService userService) {
+    public RestController(UserService userService, RoleService roleService) {
         this.userService = userService;
+        this.roleService = roleService;
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody User user) {
-        user.setRoles(userService.getRoles(user.getRolesName()));
+    public ResponseEntity<?> create(@RequestBody User user, @RequestParam(value = "roles") List<String> roles) {
+        System.out.println(roles);
+        System.out.println(roleService.getRoleByName(roles));
+
+        user.setRoles(roleService.getRoleByName(roles));
         userService.saveUser(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -47,10 +50,14 @@ public class RestController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody User user, @RequestParam(value = "usernameOld") String usernameOld,
-                                    @RequestParam(value = "passwordOld") String passwordOld) {
+    public ResponseEntity<?> update(@RequestBody User user,
+                                    @RequestParam(value = "usernameOld") String usernameOld,
+                                    @RequestParam(value = "passwordOld") String passwordOld,
+                                    @RequestParam(value = "roles") List<String> roles) {
 
-        user.setRoles(userService.getRoles(user.getRolesName()));
+        System.out.println(roleService.getRoleByName(roles));
+        user.setRoles(roleService.getRoleByName(roles));
+
         boolean updated = userService.updateUser(user, usernameOld, passwordOld);
         if (!updated) {
             System.out.println("Username already exists");
